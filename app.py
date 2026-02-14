@@ -20,6 +20,7 @@ from sklearn.metrics import (
     f1_score, roc_auc_score, matthews_corrcoef, confusion_matrix, classification_report
 )
 
+# This must come AFTER imports
 st.set_page_config(page_title="BITS Assignment 2", layout="wide")
 st.title("ML Model Evaluation Dashboard") [cite: 9]
 
@@ -116,3 +117,4 @@ if uploaded_file is not None:
 
 else:
     st.info("Waiting for CSV file upload. Please use the sidebar.") [cite: 91]
+
