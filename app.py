@@ -116,6 +116,7 @@ if uploaded_file is not None:
                 st.text(classification_report(y_test, y_pred))
 
 else:
-    st.info("Waiting for CSV file upload. Please use the sidebar.") [cite: 91]
+    st.info("Waiting for CSV file upload. Please use the sidebar.")
+
 
 
