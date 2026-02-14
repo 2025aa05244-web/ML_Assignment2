@@ -37,9 +37,9 @@ if uploaded_file is not None:
     num_cols = df.shape[1]
     
     if num_rows < 500 or num_cols < 12:
-        st.error(f"Dataset does not meet requirements! Found {num_rows} rows and {num_cols} columns. (Need 500+ rows and 12+ features).") [cite: 30]
+        st.error(f"Dataset does not meet requirements! Found {num_rows} rows and {num_cols} columns. (Need 500+ rows and 12+ features).")
     else:
-        st.success(f"Dataset Loaded: {num_rows} instances, {num_cols} features.") [cite: 30]
+        st.success(f"Dataset Loaded: {num_rows} instances, {num_cols} features.") 
         
         # 2. Data Preprocessing
         # Handling missing values via Imputation to prevent "Empty Data" errors
@@ -59,7 +59,7 @@ if uploaded_file is not None:
         # 3. Model Selection Dropdown [cite: 92]
         st.sidebar.header("Model Selection")
         model_name = st.sidebar.selectbox("Choose a Model", 
-            ("Logistic Regression", "Decision Tree", "KNN", "Naive Bayes", "Random Forest", "XGBoost")) [cite: 34-39]
+            ("Logistic Regression", "Decision Tree", "KNN", "Naive Bayes", "Random Forest", "XGBoost")) 
 
         # Initialize Models [cite: 34-39]
         models = {
@@ -117,6 +117,7 @@ if uploaded_file is not None:
 
 else:
     st.info("Waiting for CSV file upload. Please use the sidebar.")
+
 
 
 
