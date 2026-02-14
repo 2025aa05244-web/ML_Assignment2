@@ -22,7 +22,7 @@ from sklearn.metrics import (
 
 # This must come AFTER imports
 st.set_page_config(page_title="BITS Assignment 2", layout="wide")
-st.title("ML Model Evaluation Dashboard") [cite: 9]
+st.title("ML Model Evaluation Dashboard")
 
 # sidebar for file upload 
 st.sidebar.header("Upload Dataset")
@@ -117,4 +117,5 @@ if uploaded_file is not None:
 
 else:
     st.info("Waiting for CSV file upload. Please use the sidebar.") [cite: 91]
+
 
