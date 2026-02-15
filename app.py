@@ -65,24 +65,33 @@ if uploaded_file is not None:
             "KNN": KNeighborsClassifier(),
             "Naive Bayes": GaussianNB(),
             "Random Forest": RandomForestClassifier(),
-            "XGBoost": XGBClassifier(eval_metric='logloss')
+            "XGBoost": XGBClassifier(
+                                        use_label_encoder=False, 
+                                        eval_metric='logloss',
+                                        objective='binary:logistic' if len(np.unique(y)) == 2 else 'multi:softprob'
+                                    )
         }
+
 
         if st.sidebar.button("Run Detailed Evaluation"):
             model = models[model_name]
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
             
-            # AUC Score Logic (Handles Binary and Multi-class)
+            # XGBoost specific AUC handling
             try:
                 if len(np.unique(y)) == 2:
+                    # Binary classification needs the probability of the positive class
                     y_prob = model.predict_proba(X_test)[:, 1]
                     auc = roc_auc_score(y_test, y_prob)
                 else:
+                    # Multi-class needs the 'ovr' (One-vs-Rest) strategy
                     y_prob = model.predict_proba(X_test)
                     auc = roc_auc_score(y_test, y_prob, multi_class='ovr')
-            except:
-                auc = 0.0 # Fallback for models that don't support probabilities easily
+            except Exception as e:
+                st.warning(f"AUC could not be calculated for this model: {e}")
+                auc = 0.0
+
 
             # --- DISPLAY ALL 6 METRICS ---
             st.subheader(f"Results for {model_name}")
@@ -111,3 +120,4 @@ if uploaded_file is not None:
         st.error(f"Error: {e}")
 else:
     st.info("Upload a CSV file to begin. Ensure your target is the last column.")
+
