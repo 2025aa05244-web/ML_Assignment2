@@ -116,8 +116,18 @@ if uploaded_file is not None:
             plt.ylabel("True Label")
             st.pyplot(fig)
 
+            if not os.path.exists('model'):
+                os.makedirs('model')
+                
+                # Save the trained model
+                model_filename = f"model/{model_name.lower().replace(' ', '_')}.joblib"
+                joblib.dump(model, model_filename)
+                
+                st.success(f"Model saved successfully to {model_filename}")
+
     except Exception as e:
         st.error(f"Error: {e}")
 else:
     st.info("Upload a CSV file to begin. Ensure your target is the last column.")
+
 
