@@ -28,25 +28,32 @@ uploaded_file = st.sidebar.file_uploader("Upload Test CSV", type="csv")
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     
-    # Validation Check (BITS Requirement: 500 rows, 12 features)
+    # BITS Requirement Check: 500 rows, 12 features
     if df.shape[0] < 500 or df.shape[1] < 12:
         st.error(f"Dataset too small! Found {df.shape[0]} rows and {df.shape[1]} columns.")
     else:
-        # --- CLEANING STEP (SIMPLIFIED TO PREVENT VALUEERROR) ---
+        # --- SAFE CLEANING STEP ---
         
         # 1. Drop rows with missing TARGET (Last column)
         target_name = df.columns[-1]
         df = df.dropna(subset=[target_name])
         
-        # 2. Fill missing values for features
-        # Numeric: Fill with median | Categorical: Fill with mode
+        # 2. Safe Fill for features
         for col in df.columns[:-1]:
+            # If the column is entirely empty, drop it
+            if df[col].isnull().all():
+                df = df.drop(columns=[col])
+                continue
+                
             if df[col].dtype in [np.float64, np.int64]:
                 df[col] = df[col].fillna(df[col].median())
             else:
-                df[col] = df[col].fillna(df[col].mode()[0])
+                # Fix for your KeyError: Check if mode exists before accessing [0]
+                col_mode = df[col].mode()
+                if not col_mode.empty:
+                    df[col] = df[col].fillna(col_mode[0])
 
-        # 3. Features and Target separation
+        # 3. Final Features and Target separation
         X = df.iloc[:, :-1]
         y = df.iloc[:, -1]
 
@@ -54,6 +61,8 @@ if uploaded_file is not None:
         X = pd.get_dummies(X, drop_first=True)
         if not np.issubdtype(y.dtype, np.number):
             y = pd.factorize(y)[0]
+        else:
+            y = y.astype(int)
 
         # Train/Test Split
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -85,7 +94,7 @@ if uploaded_file is not None:
             
             # Confusion Matrix
             fig, ax = plt.subplots()
-            sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='RdPu')
+            sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='viridis')
             st.pyplot(fig)
 else:
     st.info("Awaiting CSV upload...")
